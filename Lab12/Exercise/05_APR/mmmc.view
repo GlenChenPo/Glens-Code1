@@ -1,0 +1,21 @@
+# Version:1.0 MMMC View Definition File
+# Do Not Remove Above Line
+# ========================================================
+# Project:  iclab APR mmmc configure
+# File:     mmmc.tcl
+# Author:   Lai Lin-Hung @ Si2 Lab
+# Date:     2023.07.25
+# ========================================================
+
+set ProcessRoot "/RAID2/COURSE/BackUp/2023_Spring/iclab/iclabta01/UMC018_CBDK/CIC/SOCE/"
+set MemoryRoot "../Memory/ftclib_200901.2.1/EXE/"
+set enc_source_continue_on_error true
+create_rc_corner -name RC_Corner -cap_table $ProcessRoot/u18_Faraday.CapTbl -qx_tech_file $ProcessRoot/FireIce/icecaps.tch
+create_library_set -name lib_max -timing "$ProcessRoot/lib/fsa0m_a_generic_core_ss1p62v125c.lib $ProcessRoot/lib/fsa0m_a_t33_generic_io_ss1p62v125c.lib" -si $ProcessRoot/celtic/u18_ss.cdb
+create_library_set -name lib_min -timing "$ProcessRoot/lib/fsa0m_a_generic_core_ff1p98vm40c.lib $ProcessRoot/lib/fsa0m_a_t33_generic_io_ff1p98vm40c.lib" -si $ProcessRoot/celtic/u18_ff.cdb
+create_constraint_mode -name func_mode -sdc_files CHIP.sdc
+create_delay_corner -name Delay_Corner_max -library_set lib_max -rc_corner RC_Corner
+create_delay_corner -name Delay_Corner_min -library_set lib_min -rc_corner RC_Corner
+create_analysis_view -name av_func_mode_max -constraint_mode func_mode -delay_corner Delay_Corner_max
+create_analysis_view -name av_func_mode_min -constraint_mode func_mode -delay_corner Delay_Corner_min
+set_analysis_view -setup av_func_mode_max -hold av_func_mode_min
